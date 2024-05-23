@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+/*無名関数としてfunctionの定義*/
+/*/にGET命令が来たら、それはwelcome.blade.phpに飛ばせよ*/
 Route::get('/', function () {
     return view('welcome');
 });
