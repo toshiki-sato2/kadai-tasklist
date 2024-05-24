@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TasksController; 
 
 /*
 |--------------------------------------------------------------------------
@@ -15,6 +16,11 @@ use Illuminate\Support\Facades\Route;
 
 /*無名関数としてfunctionの定義*/
 /*/にGET命令が来たら、それはwelcome.blade.phpに飛ばせよ*/
-Route::get('/', function () {
+/*view下のwelcome.blade.phpへ接続する、階層が深くなったら*.hogehoge.phpとドットで*/
+/*Route::get('/', function () {
     return view('welcome');
-});
+});*/
+
+
+Route::get('/', [TasksController::class, 'index']);
+Route::resource('tasks', TasksController::class);
