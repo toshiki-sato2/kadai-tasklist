@@ -54,13 +54,13 @@ class TasksController extends Controller
             "status" => "required|max:10",
             "content" => "required",
             ]);
+            
+        $request->user()->tasks()->create([
+            "content" => $request->content,
+            "status" => $request->status,
+        ]);
         
-        $task = new Task;
-        $task->content = $request->content;
-        $task->status = $request->status;
-        $task->save();
-        
-        return redirect("/");
+        return redirect("/dashboard");
     }
 
     /**
@@ -101,11 +101,17 @@ class TasksController extends Controller
             
     
         $task = Task::findOrFail($id);
-        $task->content = $request->content;
-        $task->status = $request->status;
-        $task->save();
         
-        return redirect("/");
+        // 認証済みユーザー（閲覧者）がその投稿の所有者である場合は投稿を更新
+        if (\Auth::id() === $task->user_id) {
+        $task->content = $request->content;
+        $task->status = $request->status;            
+        $task->save();
+            return redirect("/")
+                ->with('success','Update Successful');
+        }
+        
+        return redirect("/")->with("update failed");
     }
 
     /**
@@ -113,11 +119,18 @@ class TasksController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        // idの値で投稿を検索して取得
         $task = Task::findOrFail($id);
         
-        $task->delete();
-        
-        return redirect("/");
+        // 認証済みユーザー（閲覧者）がその投稿の所有者である場合は投稿を削除
+        if (\Auth::id() === $task->user_id) {
+            $task->delete();
+            return redirect("/")
+                ->with('success','Delete Successful');
+        }
+
+        // 前のURLへリダイレクトさせる
+        return redirect("/")
+            ->with('Delete Failed');
     }
 }
