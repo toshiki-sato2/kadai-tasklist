@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Task; 
+use App\Models\User;
 
 class TasksController extends Controller
 {
@@ -13,10 +14,21 @@ class TasksController extends Controller
     public function index()
     {
         //
-        $tasks = Task::all();
+        $tasks = [];
+        if (\Auth::check()) { // 認証済みの場合
+            // 認証済みユーザーを取得
+            $user = \Auth::user();
+            // ユーザーの投稿の一覧を作成日時の降順で取得
+            // （後のChapterで他ユーザーの投稿も取得するように変更しますが、現時点ではこのユーザーの投稿のみ取得します）
+            $get_tasks = $user->tasks()->orderBy('created_at', 'desc')->paginate(10);
+            $tasks = [
+                'user' => $user,
+                'tasks' => $get_tasks,
+            ];
+        }
         
-        return view("tasks.index",[
-            "tasks"=>$tasks],);
+        
+        return view("dashboard",$tasks);
     }
 
     /**

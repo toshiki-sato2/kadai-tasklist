@@ -1,6 +1,4 @@
-@extends("layouts.app")
 
-@section("content")
 
     <div class="prose ml-4">
         <h2 class="text-lg">タスク 一覧</h2>
@@ -28,4 +26,3 @@
     @endif
     <a class="btn btn-primary" href="{{ route('tasks.create') }}">タスクの投稿</a>
 
-@endsection
