@@ -70,9 +70,15 @@ class TasksController extends Controller
     {
         //
         $task = Task::findOrFail($id);
+
+        // 認証済みユーザー（閲覧者）がその投稿の所有者である場合は投稿を閲覧
+        if (\Auth::id() === $task->user_id) {
+            return view("tasks.show",[
+                "task" => $task],);
+        }
         
-        return view("tasks.show",[
-            "task" => $task],);
+        
+        return redirect("/dashboard");
     }
 
     /**
@@ -83,8 +89,14 @@ class TasksController extends Controller
         //
         $task = Task::findOrFail($id);
         
-        return view("tasks.edit", [
-            "task" => $task],);
+        // 認証済みユーザー（閲覧者）がその投稿の所有者である場合は投稿を閲覧
+        if (\Auth::id() === $task->user_id) {
+            return view("tasks.edit",[
+                "task" => $task],);
+        }
+        
+        
+        return redirect("/dashboard");
     }
 
     /**
